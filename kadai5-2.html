@@ -11,12 +11,28 @@
     </p></form>
     
     <div id="result"></div>
-    <script>
-        async function some_api(myForm) {
-            // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
-            document.apiform.reset();
+   <script> 
+    async function some_api(myForm) { 
+        const name = myForm.form_data.value;
+        const endpoint = `https://api.agify.io/?name=${encodeURIComponent(name)}`;
+        
+        try {
+            const response = await fetch(endpoint);
+            const data = await response.json();
+
+            if (data.age !== null) {
+                document.getElementById("result").innerHTML += 
+                    `名前：${data.name}、推定年齢：${data.age}歳（${data.count}人のデータに基づく）<br />`;
+            } else {
+                document.getElementById("result").innerHTML += 
+                    `名前：${data.name} に関する年齢データは見つかりませんでした。<br />`;
+            }
+        } catch (error) {
+            document.getElementById("result").innerHTML += "APIの呼び出しでエラーが発生しました。<br />";
         }
-    </script>
+
+        document.apiform.reset(); 
+    } 
+</script>
 </body>
 </html>
